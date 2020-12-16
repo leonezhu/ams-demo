@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>AMS Demo</title>
+    <script src="${springMacroRequestContext.getContextPath()}/pages/amsDemo/polyfill-7.4.0.min.js"></script>
+</head>
+<body>
+<script>
+
+    var amsConfigJson = {
+        "resources": {
+            "demoResource": {
+                "api": {
+                    "prefix": "https://www.yournana.club/vipshop/",
+                    "withCredentials": false,
+                    "read": "read",
+                    "update": "update",
+                    "list": "list",
+                    "delete": "delete",
+                    "create": "create",
+                    "successCode": 0
+                },
+                "fields": {
+                    "id": {"type": "text", "label": "ID"},
+                    "testText": {"type": "text", "label": "名称"},
+                    "testTextarea": {"type": "textarea", "label": "文本框"},
+                    // "testSwitch": {"type": "switch", "label": "开关"},
+                    "testDate": {"type": "datetime", "label": "创建时间"},
+                    "testDatetime": {"type": "date", "label": "更新日期"}
+                    // "testImage": {"type": "image", "label": "图片上传"}
+                }
+            }
+        }, "blocks": {
+            "routerBlock": {
+                "router": {
+                    "defaultBreadcrumb": true,
+                    "routes": [{"path": "/preview", "name": "列表", "meta": {"icon": "menu"}, "block": "listBlock1"}]
+                },
+                "blocks": {
+                    "listBlock1": {
+                        "events": {
+                            "init": "@list",
+                            "removeItem": "@confirm:确认删除吗? @delete @list",
+                            "editItem": "dialogBlock1.show",
+                            "addItem": "dialogBlock1.show"
+                        },
+                        "type": "list",
+                        "resource": "demoResource",
+                        "blocks": {},
+                        "operations": {
+                            "editItem": {
+                                "type": "button",
+                                "label": "编辑",
+                                "props": {"type": "primary", "size": "mini"}
+                            }
+                        }
+                    }
+                },
+                "type": "router"
+            }, "dialogBlock1": {
+                "data": {"title": "标题"}, "props": {"append-to-body": true}, "type": "dialog", "blocks": {
+                    "formBlock1": {
+                        "ctx": "edit",
+                        "type": "form",
+                        "resource": "demoResource",
+                        "events": {
+                            "init": "@initForm @clearReturn",
+                            "submit": "@validate @update @clear dialogBlock1.hide"
+                        },
+                        "operations": {"submit": {"type": "button", "label": "提交", "props": {"type": "primary"}}},
+                        "actions": {
+                            "initForm": function (M) {
+                                var e = M.$prevReturn && M.$prevReturn.id;
+                                e && this.callAction("@read", {id: e})
+                            }, "clear": function () {
+                                this.data = {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+</script>
+<link rel="stylesheet" href="${springMacroRequestContext.getContextPath()}/pages/amsDemo/element-ui@2.11.1.css"/>
+<script src="${springMacroRequestContext.getContextPath()}/pages/amsDemo/vue@2.6.10.js"></script>
+<script src="${springMacroRequestContext.getContextPath()}/pages/amsDemo/element-ui@2.11.1.js"></script>
+<script src="${springMacroRequestContext.getContextPath()}/pages/amsDemo/ams@0.12.0.js"></script>
+<script id="ams-config" src="${springMacroRequestContext.getContextPath()}/pages/amsDemo/ams-init@0.1.5.js"></script>
+
+
+</body>
+</html>
